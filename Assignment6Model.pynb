@@ -1,0 +1,146 @@
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+     
+
+# Load the dataset
+titanic=pd.read_csv('/content/titanic_dataset .csv')
+titanic.head()
+
+     
+PassengerId	Survived	Pclass	Name	Sex	Age	SibSp	Parch	Ticket	Fare	Cabin	Embarked
+0	1	0	3	Braund, Mr. Owen Harris	male	22.0	1	0	A/5 21171	7.2500	NaN	S
+1	2	1	1	Cumings, Mrs. John Bradley (Florence Briggs Th...	female	38.0	1	0	PC 17599	71.2833	C85	C
+2	3	1	3	Heikkinen, Miss. Laina	female	26.0	0	0	STON/O2. 3101282	7.9250	NaN	S
+3	4	1	1	Futrelle, Mrs. Jacques Heath (Lily May Peel)	female	35.0	1	0	113803	53.1000	C123	S
+4	5	0	3	Allen, Mr. William Henry	male	35.0	0	0	373450	8.0500	NaN	S
+
+# Preprocessing
+# Dropping unnecessary columns
+titanic.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'],axis=1,inplace=True)
+     
+
+titanic.head()
+     
+Survived	Pclass	Sex	Age	SibSp	Parch	Fare	Embarked
+0	0	3	male	22.0	1	0	7.2500	S
+1	1	1	female	38.0	1	0	71.2833	C
+2	1	3	female	26.0	0	0	7.9250	S
+3	1	1	female	35.0	1	0	53.1000	S
+4	0	3	male	35.0	0	0	8.0500	S
+
+# Checking missing values
+titanic.isnull().sum()
+     
+Survived      0
+Pclass        0
+Sex           0
+Age         177
+SibSp         0
+Parch         0
+Fare          0
+Embarked      2
+dtype: int64
+
+titanic['Age']=titanic['Age'].fillna(titanic['Age'].median())
+     
+
+titanic['Embarked']=titanic['Embarked'].fillna(titanic['Embarked'].mode()[0])
+     
+
+titanic.isnull().sum()
+     
+Survived    0
+Pclass      0
+Sex         0
+Age         0
+SibSp       0
+Parch       0
+Fare        0
+Embarked    0
+dtype: int64
+
+from sklearn.model_selection import train_test_split, cross_val_score, KFold, StratifiedKFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+     
+
+# Converting categorical variables to numerical
+titanic = pd.get_dummies(titanic, columns=['Sex', 'Embarked'], drop_first=True)
+     
+
+titanic.head()
+     
+Survived	Pclass	Age	SibSp	Parch	Fare	Sex_male	Embarked_Q	Embarked_S
+0	0	3	22.0	1	0	7.2500	1	0	1
+1	1	1	38.0	1	0	71.2833	0	0	0
+2	1	3	26.0	0	0	7.9250	0	0	1
+3	1	1	35.0	1	0	53.1000	0	0	1
+4	0	3	35.0	0	0	8.0500	1	0	1
+
+# Split dataset into features and target variable
+X = titanic.drop('Survived', axis=1)
+y = titanic['Survived']
+     
+
+# Standardizing features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+     
+
+X_scaled
+     
+array([[ 0.82737724, -0.56573646,  0.43279337, ...,  0.73769513,
+        -0.30756234,  0.61583843],
+       [-1.56610693,  0.66386103,  0.43279337, ..., -1.35557354,
+        -0.30756234, -1.62380254],
+       [ 0.82737724, -0.25833709, -0.4745452 , ..., -1.35557354,
+        -0.30756234,  0.61583843],
+       ...,
+       [ 0.82737724, -0.1046374 ,  0.43279337, ..., -1.35557354,
+        -0.30756234,  0.61583843],
+       [-1.56610693, -0.25833709, -0.4745452 , ...,  0.73769513,
+        -0.30756234, -1.62380254],
+       [ 0.82737724,  0.20276197, -0.4745452 , ...,  0.73769513,
+         3.25137334, -1.62380254]])
+
+#Create kNN and SVM models
+knn_model = KNeighborsClassifier()
+svm_model = SVC()
+     
+
+#Do k-fold and stratified k-fold cross-validation techniques
+# k-fold cross-validation
+k_fold = KFold(n_splits=5, shuffle=True, random_state=42)
+knn_scores = cross_val_score(knn_model, X_scaled, y, cv=k_fold)
+svm_scores = cross_val_score(svm_model, X_scaled, y, cv=k_fold)
+     
+
+# Stratified k-fold cross-validation
+strat_k_fold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+strat_knn_scores = cross_val_score(knn_model, X_scaled, y, cv=strat_k_fold)
+strat_svm_scores = cross_val_score(svm_model, X_scaled, y, cv=strat_k_fold)
+     
+
+# Calculate average accuracy scores
+avg_knn_score = knn_scores.mean()
+avg_svm_score = svm_scores.mean()
+avg_strat_knn_score = strat_knn_scores.mean()
+avg_strat_svm_score = strat_svm_scores.mean()
+     
+
+print("Average Accuracy Scores:")
+print("kNN (k-fold):", avg_knn_score)
+print("SVM (k-fold):", avg_svm_score)
+print("kNN (Stratified k-fold):", avg_strat_knn_score)
+print("SVM (Stratified k-fold):", avg_strat_svm_score)
+     
+Average Accuracy Scores:
+kNN (k-fold): 0.8103320569957944
+SVM (k-fold): 0.8249325214989642
+kNN (Stratified k-fold): 0.8136965664427847
+SVM (Stratified k-fold): 0.8293704098926622
