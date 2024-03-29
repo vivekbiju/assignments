@@ -1,0 +1,86 @@
+
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+     
+
+# load the data set
+df=pd.read_excel('/content/iris (2).xls')
+     
+
+df
+     
+SL	SW	PL	PW	Classification
+0	5.1	3.5	1.4	0.2	Iris-setosa
+1	4.9	3.0	1.4	0.2	Iris-setosa
+2	4.7	3.2	1.3	0.2	Iris-setosa
+3	4.6	3.1	1.5	0.2	Iris-setosa
+4	5.0	3.6	1.4	0.2	Iris-setosa
+...	...	...	...	...	...
+145	6.7	3.0	5.2	2.3	Iris-virginica
+146	6.3	2.5	5.0	1.9	Iris-virginica
+147	6.5	3.0	5.2	2.0	Iris-virginica
+148	6.2	3.4	5.4	2.3	Iris-virginica
+149	5.9	3.0	5.1	1.8	Iris-virginica
+150 rows × 5 columns
+
+
+#Display the columns
+print("Columns in the dataset:")
+print(df.columns)
+     
+Columns in the dataset:
+Index(['SL', 'SW', 'PL', 'PW', 'Classification'], dtype='object')
+
+#Calculating the mean of each column of the dataset.
+mean_values = df.mean(numeric_only=True)
+print(mean_values)
+
+     
+SL    5.843333
+SW    3.054000
+PL    3.758667
+PW    1.198667
+dtype: float64
+
+# Check for null values in the dataset
+df.isnull().sum()
+     
+SL                0
+SW                0
+PL                0
+PW                0
+Classification    0
+dtype: int64
+
+#Perform meaningful visualizations using the dataset
+# Visualization 1: Boxplot
+plt.figure(figsize=(10, 6))
+sns.boxplot(data=df)
+plt.title("Boxplot of Iris Dataset")
+plt.show()
+     
+
+
+plt.figure(figsize=(10, 15))
+df[['SL', 'SW', 'PL', 'PW']].plot(kind='line')
+plt.show()
+     
+<Figure size 1000x1500 with 0 Axes>
+
+
+column_names = df.columns[:-1]
+     
+
+plt.pie(mean_values, labels=column_names, autopct="%1.1f%%")
+plt.show()
+     
+
+
+plt.bar(df["SL"],df["SW"])
+plt.xlabel('SL')
+plt.ylabel('SW')
+plt.show()
+     
