@@ -1,0 +1,103 @@
+import numpy as np
+import pandas as pd
+     
+
+sales=pd.read_csv('/content/Sales_add.csv')
+     
+
+sales
+     
+Month	Region	Manager	Sales_before_digital_add(in $)	Sales_After_digital_add(in $)
+0	Month-1	Region - A	Manager - A	132921	270390
+1	Month-2	Region - A	Manager - C	149559	223334
+2	Month-3	Region - B	Manager - A	146278	244243
+3	Month-4	Region - B	Manager - B	152167	231808
+4	Month-5	Region - C	Manager - B	159525	258402
+5	Month-6	Region - A	Manager - B	137163	256948
+6	Month-7	Region - C	Manager - C	130625	222106
+7	Month-8	Region - A	Manager - A	131140	230637
+8	Month-9	Region - B	Manager - C	171259	226261
+9	Month-10	Region - C	Manager - B	141956	193735
+10	Month-11	Region - B	Manager - C	159339	203175
+11	Month-12	Region - A	Manager - A	178939	276279
+12	Month-13	Region - B	Manager - A	145062	205180
+13	Month-14	Region - A	Manager - A	151514	253131
+14	Month-15	Region - C	Manager - A	147463	229336
+15	Month-16	Region - A	Manager - B	177195	187305
+16	Month-17	Region - A	Manager - C	140862	234908
+17	Month-18	Region - C	Manager - B	167996	191517
+18	Month-19	Region - B	Manager - A	132135	227040
+19	Month-20	Region - A	Manager - B	152493	212579
+20	Month-21	Region - B	Manager - A	147425	263388
+21	Month-22	Region - A	Manager - C	130263	243020
+
+sales.info()
+     
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 22 entries, 0 to 21
+Data columns (total 5 columns):
+ #   Column                          Non-Null Count  Dtype 
+---  ------                          --------------  ----- 
+ 0   Month                           22 non-null     object
+ 1   Region                          22 non-null     object
+ 2   Manager                         22 non-null     object
+ 3   Sales_before_digital_add(in $)  22 non-null     int64 
+ 4   Sales_After_digital_add(in $)   22 non-null     int64 
+dtypes: int64(2), object(3)
+memory usage: 1008.0+ bytes
+Testing for the effect of digital marketing
+
+H0: There is no significant increase in sales after implementing digital marketing. H1: There is a significant increase in sales after implementing digital marketing.
+
+H0: m1 <= m2 vs H1: m1>m2
+
+m1 be the average sales after stepping into digital marketing m2 be the average sales before stepping into digital marketing
+
+since sample size of both the groups is less than 30 we can use independent two sample T-test for testing the hypothesis
+
+
+#importing the ttest function from scipy
+from scipy.stats import ttest_ind
+     
+
+ttest_ind,p_value=ttest_ind(sales['Sales_After_digital_add(in $)'],sales['Sales_before_digital_add(in $)'],alternative="greater")
+     
+
+p_value
+     
+1.3071840034523225e-16
+
+if p_value<0.05:
+  print('Reject Null Hypotheis')
+else:
+  print('Accept Null Hypothesis')
+     
+Reject Null Hypotheis
+If the p-value is less than the significance level, reject the null hypothesis, indicating that there is a significant increase in sales with digital marketing.
+
+Testing the relationship between manager and region
+
+H0: There is no dependency between the "Region" and "Manager." H1: There is a significant dependency between "Region" and "Manager."
+
+
+pd.crosstab(sales['Manager'], sales['Region'])
+     
+Region	Region - A	Region - B	Region - C
+Manager			
+Manager - A	4	4	1
+Manager - B	3	1	3
+Manager - C	3	2	1
+
+from scipy.stats import chi2_contingency
+
+#creating a pandas crosstab with Manager and Region column of data
+managerandregion = pd.crosstab(sales['Manager'], sales['Region'])
+
+
+result = chi2_contingency(managerandregion)
+print(result)
+print("")
+if p_value<0.05:
+  print('Reject Null Hypotheis')
+else:
+  print('Accept Null Hypothesis')
