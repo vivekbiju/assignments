@@ -1,0 +1,125 @@
+
+
+import numpy as np
+import pandas as pd
+     
+
+data1=pd.read_csv('/content/StudentsPerformance.csv')
+     
+
+data1
+     
+gender	race/ethnicity	parental level of education	lunch	test preparation course	math score	reading score	writing score
+0	female	group C	some high school	free/reduced	none	0	17	10
+1	female	group B	high school	free/reduced	none	8	24	23
+2	female	group B	some high school	free/reduced	none	18	32	28
+3	female	group B	some college	standard	none	11	38	32
+4	female	group C	some college	free/reduced	none	22	39	33
+...	...	...	...	...	...	...	...	...
+995	male	group E	some college	standard	completed	99	87	81
+996	male	group A	some college	standard	completed	100	96	86
+997	male	group D	some college	standard	completed	100	97	99
+998	male	group E	associate's degree	free/reduced	completed	100	100	93
+999	male	group E	bachelor's degree	standard	completed	100	100	100
+1000 rows × 8 columns
+
+
+data1.info()
+     
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 8 columns):
+ #   Column                       Non-Null Count  Dtype 
+---  ------                       --------------  ----- 
+ 0   gender                       1000 non-null   object
+ 1   race/ethnicity               1000 non-null   object
+ 2   parental level of education  1000 non-null   object
+ 3   lunch                        1000 non-null   object
+ 4   test preparation course      1000 non-null   object
+ 5   math score                   1000 non-null   int64 
+ 6   reading score                1000 non-null   int64 
+ 7   writing score                1000 non-null   int64 
+dtypes: int64(3), object(5)
+memory usage: 62.6+ KB
+
+data1.describe()
+     
+math score	reading score	writing score
+count	1000.000000	1000.000000	1000.000000
+mean	66.001000	69.195000	68.119000
+std	15.569567	14.706436	15.226381
+min	0.000000	17.000000	10.000000
+25%	57.000000	59.000000	58.000000
+50%	66.000000	70.000000	69.000000
+75%	77.000000	79.250000	79.000000
+max	100.000000	100.000000	100.000000
+Que 1
+
+
+data1['gender'].value_counts()
+     
+female    518
+male      482
+Name: gender, dtype: int64
+Que 2
+
+
+data1['parental level of education'].value_counts()
+     
+some college          226
+associate's degree    222
+high school           196
+some high school      179
+bachelor's degree     118
+master's degree        59
+Name: parental level of education, dtype: int64
+
+import statistics as stat
+     
+Que 3
+
+
+data1.groupby(['gender','test preparation course']).mean()
+     
+<ipython-input-21-39288887ec35>:1: FutureWarning: The default value of numeric_only in DataFrameGroupBy.mean is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
+  data1.groupby(['gender','test preparation course']).mean()
+math score	reading score	writing score
+gender	test preparation course			
+female	completed	67.108696	77.375000	78.793478
+none	61.320359	69.955090	68.982036
+male	completed	72.988506	70.793103	70.339080
+none	66.467532	62.581169	59.551948
+Que 4
+
+
+data1.groupby(['gender','test preparation course']).var()
+     
+<ipython-input-17-115f6d3dc673>:1: FutureWarning: The default value of numeric_only in DataFrameGroupBy.var is deprecated. In a future version, numeric_only will default to False. Either specify numeric_only or select only columns which should be valid for the function.
+  data1.groupby(['gender','test preparation course']).var()
+math score	reading score	writing score
+gender	test preparation course			
+female	completed	208.173913	161.175546	149.836897
+none	272.602767	214.241220	225.495172
+male	completed	197.098133	185.297987	166.098233
+none	205.513600	184.843553	181.394687
+Que 5
+
+
+bonuspoint=data1['math score'].quantile(0.75)
+     
+
+data1[data1['math score']>bonuspoint]
+     
+gender	race/ethnicity	parental level of education	lunch	test preparation course	math score	reading score	writing score
+430	female	group A	some college	standard	completed	78	87	91
+431	female	group B	bachelor's degree	free/reduced	none	78	79	76
+432	female	group D	bachelor's degree	standard	none	78	82	79
+433	female	group D	high school	standard	none	78	81	80
+434	female	group D	bachelor's degree	free/reduced	none	78	90	93
+...	...	...	...	...	...	...	...	...
+995	male	group E	some college	standard	completed	99	87	81
+996	male	group A	some college	standard	completed	100	96	86
+997	male	group D	some college	standard	completed	100	97	99
+998	male	group E	associate's degree	free/reduced	completed	100	100	93
+999	male	group E	bachelor's degree	standard	completed	100	100	100
+231 rows × 8 columns
