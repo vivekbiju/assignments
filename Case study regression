@@ -132,13 +132,3 @@ if lin_reg_r2 > lasso_reg_r2:
 else:
     print("\nLasso Regression performs better.")
      
-Lasso Regression performs better.
-
-# Predicting the price of a 2022 model
-year_2022 = 2022
-predicted_price = lin_reg.predict([[year_2022]])
-print("\nPredicted price of a 2022 model second-hand Hyundai Grand i10 is:", predicted_price[0])
-     
-Predicted price of a 2022 model second-hand Hyundai Grand i10 is: 743601.6159450412
-/usr/local/lib/python3.10/dist-packages/sklearn/base.py:439: UserWarning: X does not have valid feature names, but LinearRegression was fitted with feature names
-  warnings.warn(
